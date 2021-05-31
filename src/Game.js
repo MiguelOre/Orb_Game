@@ -13,7 +13,11 @@ Ball.Game.prototype = {
 		this.maxLevels = 5;
 		this.movementForce = 10;
 		this.ballStartPos = { x: Ball._WIDTH*0.5, y: 450 };
+		
 
+		this.pauseButton = this.add.button(Ball._WIDTH-8, 8, 'button-pause', this.managePause, this);
+		this.pauseButton.anchor.set(1,0);
+		this.pauseButton.input.useHandCursor = true;
 		this.timerText = this.game.add.text(15, 15, "Tiempo: "+this.timer, this.fontBig);
 		this.levelText = this.game.add.text(150, 10, "Nivel: "+this.level+" / "+this.maxLevels, this.fontSmall);
 		this.totalTimeText = this.game.add.text(150, 30, "Tiempo total: "+this.totalTimer, this.fontSmall);
@@ -112,6 +116,15 @@ Ball.Game.prototype = {
 		this.timer++;
 		this.timerText.setText("Tiempo: "+this.timer);
 		this.totalTimeText.setText("Tiempo total: "+(this.totalTimer+this.timer));
+	},
+	managePause: function() {
+		this.game.paused = true;
+		var pausedText = this.add.text(Ball._WIDTH*0.5, 250, "Juego pausado,\ntoca para continuar.", this.fontMessage);
+		pausedText.anchor.set(0.5);
+		this.input.onDown.add(function(){
+			pausedText.destroy();
+			this.game.paused = false;
+		}, this);
 	},
 
 	update: function() {
