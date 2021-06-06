@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MENU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="../Logic/jquery-1.11.0.min.js"></script>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <script type="text/javascript" src="qrcode.js"></script>
+    <!--QR-->
+    <script src="Phaser/phaser.min.js" charset="utf-8"></script>
+    <script src="../Logic/connect.js"></script>
+</head>
+
+<body style="background-image: url('../Assets/menu/FORNAME1PLAYER1920x1080.png'); background-repeat: no-repeat;"> <!--wwun-->
+<!--<body style="background-color:#02498F">--> <!--wwun-->
+<!--<body>-->
+
+    <div style="height: 10%;"></div> 
+
+    <h1 style="color:white; font-size:48px; text-align:center;">Ingresa tu usuario desde la aplicación</h1>
+    
+    <div id="qrcode" style="position: relative; left: 43%; top: 10%;"></div>
+    
+    <input id="text" type="hidden" value=" " style="width:10%" /><br />
+
+    <script type="text/javascript">
+
+      var nombreyAvatarDeJugador1 = "";
+      var nombreyAvatarDeJugador2 = "";
+    
+      var qrcode = new QRCode(document.getElementById("qrcode"), {
+        width: 200,
+        height: 200
+      });
+
+      function makeCode() {
+
+        var elText = document.getElementById("text");
+
+        if (!elText.value) {
+          alert("Input a text");
+          elText.focus();
+          return;
+        }
+
+        var currentLocation = window.location + '';;
+
+        console.log(currentLocation);
+        var res = currentLocation.split("=");
+
+        if (res[1] != null)
+          var ip = res[1].split("&");
+          qrcode.makeCode(ip[0]);
+          //qrcode.makeCode(res[1]);
+      }
+
+      makeCode();
+
+      $("#text").
+        on("blur", function () {
+          makeCode();
+        }).
+        on("keydown", function (e) {
+          if (e.keyCode == 13) {
+            makeCode();
+          }
+        });
+    </script>
+
+    <div style="position: relative;">
+      <div style="position: relative; height: 100px; left: 300px;">
+      </div>
+
+      <div style="text-align: center;">
+        <img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%" id="btnReady1"></img>
+        <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 32px;" type="text" name="txtNombreJugador1" id="txtNombreJugador1" value="Jugador1" onfocus="this.value='';" size="18"></input>
+      </div>
+      
+      <div style="height: 40px;"></div>
+      
+      <div style="text-align: center;">
+        <img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%" id="btnReady2"></img>
+        <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 32px;" type="text" name="txtNombreJugador2" id="txtNombreJugador2" value="Jugador2" onfocus="this.value='';" size="18"></input>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+
+      //recibe el nombre
+      //cambia el botón
+
+      function setNameAndButton(playerName){
+        nombreyAvatarDeJugador2 = playerName;
+        var nombreDeJugador2 = nombreyAvatarDeJugador2.split("|");
+        document.getElementById("txtNombreJugador2").value = nombreDeJugador2[0];
+        alert("nombreyAvatarDeJugador2 "+nombreyAvatarDeJugador2);
+        setTimeout(changeButton(), 1000);
+      }
+
+      function changeButton(){
+        document.getElementById("btnReady2").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
+        setTimeout(goToGameAndSendNames, 1000);
+        return;
+      }
+
+      function goToGameAndSendNames(){
+          //toma los nombres ingresados de los jugadores para enviarlos al juego
+          //var nombreDeJugador2 = document.getElementById("txtNombreJugador2").value;
+          establishConnectionGame(nombreyAvatarDeJugador1, nombreyAvatarDeJugador2);
+      }
+
+      var webSocket = {};
+      var element;
+      var obj;
+      var cursor = "";
+      var audio = new Audio("../Assets/music/intro_sfx.mp3");
+      audio.addEventListener('ended', function () {
+        this.currentTime = 0;
+        this.play();
+      }, false);
+      //audio.play();
+
+      class ScenePlayer2 extends Phaser.Scene {
+        constructor() {
+          super('ScenePlayer2');
+
+          this.accumulator = 0;
+          this.fps = 30;  // Physics checks 60 times/s
+          this.physicsTimestep = 1000 / this.fps;
+        }
+        create() {
+          this.nombreJ4text = this.add.text(1114, 626, this.nombreJ4, { fontFamily: '"Arial Black"', fontSize: 24, fill: 'black', });
+
+          nombreyAvatarDeJugador1 = (new URLSearchParams(window.location.search)).get('player1NameAndAvatar');
+          var nombreDeJugador1 = nombreyAvatarDeJugador1.split("|");
+          document.getElementById("txtNombreJugador1").value = nombreDeJugador1[0];
+          //alert(""+nombreDeJugador1[0]);
+
+          document.getElementById("btnReady1").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
+        }
+        update() {
+            if(cursor.includes("nombreDelJugador2")){
+              alert("include");
+              var nombreTmp2 = cursor.split(":");
+              setNameAndButton(nombreTmp2[1]);
+            }
+        }
+          
+      }
+
+      var config = {
+        type: Phaser.arcade,
+
+        audio: {
+          disableWebAudio: true
+        },
+
+        width: 1920,
+        height: 1080,
+        transparent: true,
+        //backgroundColor: '#222288',
+        dom: {
+          createContainer: true
+        },
+        pixelArt: true,
+        fps: {
+          min: 10,
+          target: 60,
+          forceSetTimeOut: false,
+          deltaHistory: 30
+        },
+        scene: [ScenePlayer2],
+        physics: {
+          default: 'arcade',
+          arcade: {
+            debug: false
+          }
+        },
+
+      };
+
+      var game = new Phaser.Game(config);
+
+    </script>
+
+</body>
+</html>

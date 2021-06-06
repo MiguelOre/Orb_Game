@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MENU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="../Logic/jquery-1.11.0.min.js"></script>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <script src="Phaser/phaser.min.js" charset="utf-8"></script>
+    <script src="../Logic/connect.js"></script>
+    
+ </head>
+
+
+<body style="background-image: url('../Assets/menu/past_fondo.jpg') ; background-repeat: no-repeat;">
+        
+        <div style="height: 20%;"></div> 
+        <h1 style="color:white; font-size:48px; text-align:center;">Ingresa tu usuario desde la aplicación</h1>
+        <div style="position: relative; height: 10%; left: 300px;">
+        </div>
+        
+        <div style="text-align: center;">
+            <img src="../Assets/menu/REDCYRCLEBUTTON.png" height="3%" width="3%" id="btnReady"></img>
+            <input style="height: 25px; background-color: transparent; border: none; outline: none; border-bottom:1px solid #fff; color: #555; font-style: italic; font-size: 32px;" type="text" name="txtNombre" id="txtNombre" value="Jugador1" onfocus="this.value='';" size="18"></input>
+        </div>
+    
+
+    <script type="text/javascript">
+
+        var nombreyAvatarDeJugador1 = "";
+
+        //recibe el nombre
+        //cambia el botón
+        function setNameAndButton(nombreDeJugador){
+            nombreyAvatarDeJugador1 = nombreDeJugador;
+            var nombreDeJugador1 = nombreyAvatarDeJugador1.split("|");
+            document.getElementById("txtNombre").value = nombreDeJugador1[0];
+            setTimeout(changeButton, 1000);
+        }
+
+        function changeButton(){
+            document.getElementById("btnReady").src = "../Assets/menu/GREENCYRCLEBUTTON.png";
+            setTimeout(goToGameAndSendName, 1000);
+        }
+
+        function goToGameAndSendName(){
+            goToMenu(nombreyAvatarDeJugador1);
+        }
+
+        var webSocket = {};
+        var element;
+        var obj;
+        var cursor = "";
+        var audio = new Audio("../Assets/music/intro_sfx.mp3");
+        audio.addEventListener(
+            'ended', 
+            function () {
+                this.currentTime = 0;
+                this.play();
+            },
+            false);
+        
+        class SceneMenu extends Phaser.Scene {
+            constructor() {
+                super('SceneMenu');
+
+                this.accumulator = 0;
+                this.fps = 30;  // Physics checks 60 times/s
+                this.physicsTimestep = 1000 / this.fps;
+
+            }
+            create() {
+                this.nombreJ4text = this.add.text(
+                    1114, 
+                    626, 
+                    this.nombreJ4, 
+                    {   fontFamily: '"Arial Black"', 
+                        fontSize: 24, 
+                        fill: 'black', 
+                    }
+                );
+            }
+            update() {
+                if(cursor.includes("nombreDelJugador1")){
+                    var nombreTmp = cursor.split(":");
+                    setNameAndButton(nombreTmp[1]);
+                }
+            }            
+        }
+
+        var SCREEN_WIDTH = 1920;
+        var SCREEN_HEIGHT = 1080;
+        var config = {
+            type: Phaser.arcade,
+            audio: {
+                disableWebAudio: true
+            },
+            width: 1920,
+            height: 1080,
+            transparent: true,
+            dom: {
+                createContainer: true
+            },
+            pixelArt: true,
+            fps: {
+                min: 10,
+                target: 60,
+                forceSetTimeOut: false,
+                deltaHistory: 30
+            },
+            scene: [SceneMenu],
+            physics: {
+                default: 'arcade',
+                arcade: {
+                debug: false
+                }
+            },
+        };
+
+        var game = new Phaser.Game(config);
+
+    </script>
+</body>
+</html>

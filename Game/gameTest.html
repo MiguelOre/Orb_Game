@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Miguel Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+	<style> body { margin: 0; background: #2B2E31 url(img/screen-bg.png) repeat; } </style>
+    <script type="text/javascript" src="../Logic/jquery-1.11.0.min.js"></script>
+    <script src="Phaser/phaser.min.js"></script>
+    <link rel="stylesheet" href="../CSS/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
+    <script type="text/javascript" src="qrcode.js"></script>
+    <script src="../Logic/connect.js"></script>
+	<script src="phaser-arcade-physics.2.2.2.min.js"></script>
+	<script src="gyro.min.js"></script>
+	<script src="Boot.js"></script>
+	<script src="Preloader.js"></script>
+	<script src="Game.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body>
+<script type="text/javascript">
+
+    var webSocket = {};
+    var obj;
+    var element;
+    var cursor = "";
+    var audio = new Audio("../Assets/music/intro_sfx.mp3");
+    audio.addEventListener(
+        'ended',
+        function () {
+            this.currentTime = 0;
+                this.play();
+            },
+        false);
+        
+(function() {
+
+    
+	var game = new Phaser.Game(320, 480, Phaser.CANVAS, 'game');
+	game.state.add('Boot', Ball.Boot);
+	game.state.add('Preloader', Ball.Preloader);
+	game.state.add('Game', Ball.Game);
+	game.state.start('Boot');
+})();
+</script>
+</body>
+</html>
