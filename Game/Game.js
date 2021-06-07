@@ -55,6 +55,7 @@ Ball.Game.prototype = {
 		this.borderGroup.create(0, 0, 'border-vertical');
 		this.borderGroup.create(Ball._WIDTH-2, 0, 'border-vertical');
 		this.borderGroup.setAll('body.immovable', true);
+		this.bounceSound = this.game.add.audio('audio-bounce');
 	},
 	initLevels: function() {
 		this.levels = [];
@@ -161,6 +162,16 @@ Ball.Game.prototype = {
 		this.physics.arcade.collide(this.ball, this.borderGroup, this.wallCollision, null, this);
 		this.physics.arcade.collide(this.ball, this.levels[this.level-1], this.wallCollision, null, this);
 		this.physics.arcade.overlap(this.ball, this.hole, this.finishLevel, null, this);
+	},
+
+	wallCollision: function() {
+		if(this.audioStatus) {
+			this.bounceSound.play();
+		}
+		// Vibration API
+		if("vibrate" in window.navigator) {
+			window.navigator.vibrate(100);
+		}
 	},
 
 	finishLevel: function() {

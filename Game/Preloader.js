@@ -35,6 +35,9 @@ Ball.Preloader.prototype = {
 		//this.load.spritesheet('button-audio', "../Assets/img/orb_game/button-audio.png", 35, 35);
 		//this.load.spritesheet('button-start', "../Assets/img/orb_game/button-start.png", 146, 51); 
 
+		this.load.audio('audio-bounce', ['..Game/audio/bounce.ogg', '..Game/audio/bounce.mp3', '..Game/audio/bounce.m4a']);
+
+
 
 
 
